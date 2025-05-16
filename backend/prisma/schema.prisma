@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Subscription model to store user subscriptions to weather updates
+model Subscription {
+  id        Int       @id @default(autoincrement())
+  email     String
+  city      String
+  frequency Frequency
+  confirmed Boolean   @default(false)
+
+  // Tokens for email confirmation and unsubscription with expiration
+  confirmToken          String?   @unique // Nullable because it's cleared after confirmation
+  confirmTokenExpiresAt DateTime? @map("confirm_token_expires_at") // When the confirmation token expires
+  unsubscribeToken      String    @unique
+
+  // Tracking fields
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  lastSentAt DateTime? @map("last_sent_at") // Track when the last update was sent
+
+  // Relations
+  emailLogs EmailLog[]
+
+  // Ensure a user can only subscribe once to a specific city
+  @@unique([email, city])
+  @@map("subscriptions")
+}
+
+// Enum for subscription frequency
+enum Frequency {
+  HOURLY @map("hourly")
+  DAILY  @map("daily")
+}
+
+// WeatherCache model to store recent weather data and reduce API calls
+model WeatherCache {
+  id          Int      @id @default(autoincrement())
+  city        String   @unique
+  temperature Float
+  humidity    Float
+  description String
+  fetchedAt   DateTime @default(now()) @map("fetched_at")
+  test        String?
+
+  @@map("weather_cache")
+}
+
+// EmailLog to track sent emails for debugging and analytics
+model EmailLog {
+  id             Int      @id @default(autoincrement())
+  subscriptionId Int      @map("subscription_id")
+  status         String // "sent", "failed", "bounced", etc.
+  type           String // "weather_update", "subscription_confirmation", "unsubscription_confirmation", etc.
+  errorMessage   String?  @map("error_message")
+  sentAt         DateTime @default(now()) @map("sent_at")
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId])
+  @@map("email_logs")
+}
