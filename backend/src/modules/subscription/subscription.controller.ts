@@ -20,7 +20,6 @@ export async function subscribe(
   next: NextFunction
 ) {
   try {
-    //TODO: do a form data as well
     const { email, city } = req.body;
 
     const existingSubscription = await db.subscription.findFirst({

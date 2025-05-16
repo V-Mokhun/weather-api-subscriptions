@@ -1,8 +1,9 @@
 import { NextFunction, Response } from "express";
 import { GetWeatherRequest } from "./weather.route";
 import { db } from "@/db";
-import { weatherService } from "@/lib/weather";
+import { weatherService as weatherExternalService } from "@/lib/weather";
 import { CACHE_THRESHOLD } from "@/constants";
+import * as weatherService from "./weather.service";
 
 export async function getWeather(
   req: GetWeatherRequest,
@@ -28,23 +29,9 @@ export async function getWeather(
       return;
     }
 
-    const weatherData = await weatherService.getWeatherData(city);
+    const weatherData = await weatherExternalService.getWeatherData(city);
 
-    await db.weatherCache.upsert({
-      where: { city },
-      update: {
-        temperature: weatherData.temperature,
-        humidity: weatherData.humidity,
-        description: weatherData.description,
-        fetchedAt: new Date(),
-      },
-      create: {
-        city,
-        temperature: weatherData.temperature,
-        humidity: weatherData.humidity,
-        description: weatherData.description,
-      },
-    });
+    await weatherService.upsertWeatherCache(city, weatherData);
 
     res.status(200).json({
       temperature: weatherData.temperature,

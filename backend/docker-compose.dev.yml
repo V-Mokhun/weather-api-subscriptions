@@ -52,7 +52,6 @@ services:
       - .env.development
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db-dev:5432/${POSTGRES_DB}
-      - DB_HOST=db-dev
     ports:
       - 8001:8000
     networks:

@@ -15,13 +15,12 @@ export class WeatherService {
   private readonly apiKey: string;
   private readonly baseUrl: string;
 
-  constructor() {
-    this.apiKey = env.WEATHER_API_KEY;
-    this.baseUrl = "https://api.weatherapi.com/v1";
-
-    if (!this.apiKey) {
-      console.warn("Warning: WEATHER_API_KEY not set");
-    }
+  constructor(
+    apiKey = env.WEATHER_API_KEY,
+    baseUrl = "https://api.weatherapi.com/v1"
+  ) {
+    this.apiKey = apiKey;
+    this.baseUrl = baseUrl;
   }
 
   async getWeatherData(city: string): Promise<WeatherData> {

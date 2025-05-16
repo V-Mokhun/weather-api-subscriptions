@@ -1,12 +1,15 @@
 import { Job } from "bullmq";
 import { JobProcessor } from "../../types";
 import { UpdateWeatherDataJobData } from "./update-weather-data.config";
-import { WeatherData, weatherService } from "@/lib/weather";
+import {
+  WeatherData,
+  weatherService as weatherExternalService,
+} from "@/lib/weather";
 import { db } from "@/db";
 import { CACHE_THRESHOLD } from "@/constants";
 import { SendWeatherUpdateEmailQueue } from "../../queues";
 import { JOB_TYPES } from "../../constants";
-
+import * as weatherService from "@/modules/weather/weather.service";
 export class UpdateWeatherDataProcessor implements JobProcessor {
   async handle(job: Job<UpdateWeatherDataJobData>) {
     const { subscriptionId } = job.data;
@@ -46,23 +49,9 @@ export class UpdateWeatherDataProcessor implements JobProcessor {
           description: cachedWeather.description,
         };
       } else {
-        weatherData = await weatherService.getWeatherData(city);
+        weatherData = await weatherExternalService.getWeatherData(city);
 
-        await db.weatherCache.upsert({
-          where: { city },
-          update: {
-            temperature: weatherData.temperature,
-            humidity: weatherData.humidity,
-            description: weatherData.description,
-            fetchedAt: now,
-          },
-          create: {
-            city,
-            temperature: weatherData.temperature,
-            humidity: weatherData.humidity,
-            description: weatherData.description,
-          },
-        });
+        await weatherService.upsertWeatherCache(city, weatherData);
       }
 
       await SendWeatherUpdateEmailQueue.add(
