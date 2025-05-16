@@ -1,11 +1,10 @@
-import { Frequency } from "@prisma/client";
 import { z } from "zod";
 
 export const SubscribeBodySchema = z
   .object({
     email: z.string().email("Invalid email format"),
     city: z.string().min(1, "City is required"),
-    frequency: z.nativeEnum(Frequency, {
+    frequency: z.enum(["hourly", "daily"], {
       errorMap: () => ({
         message: "Frequency must be either 'hourly' or 'daily'",
       }),
