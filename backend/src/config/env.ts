@@ -2,18 +2,19 @@ import { config } from "dotenv";
 import { expand } from "dotenv-expand";
 import path, { join } from "path";
 
-const envPath = path.resolve(
-  join(
-    __dirname,
-    "../..",
-    process.env.NODE_ENV === "development" ? ".env.development" : ".env"
-  )
-);
+let envFile = ".env";
+if (process.env.NODE_ENV === "development") {
+  envFile = ".env.development";
+} else if (process.env.NODE_ENV === "test") {
+  envFile = ".env.test";
+}
+
+const envPath = path.resolve(join(__dirname, "../..", envFile));
 
 expand(config({ path: envPath }));
 
 type EnvConfig = {
-  NODE_ENV: "development" | "production";
+  NODE_ENV: "development" | "production" | "test";
   API_PORT: number;
   API_URL: string;
   REDIS_HOST: string;
@@ -42,8 +43,10 @@ function parseEnvVar<T>(key: keyof EnvConfig, parser: (value: string) => T): T {
 
 export const env: EnvConfig = {
   NODE_ENV: parseEnvVar("NODE_ENV", (value) => {
-    if (value !== "development" && value !== "production") {
-      throw new Error("NODE_ENV must be either 'development' or 'production'");
+    if (value !== "development" && value !== "production" && value !== "test") {
+      throw new Error(
+        "NODE_ENV must be either 'development', 'production', or 'test'"
+      );
     }
     return value;
   }),

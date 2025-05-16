@@ -1,14 +1,17 @@
+import { Frequency } from "@prisma/client";
 import { z } from "zod";
 
 export const SubscribeBodySchema = z
   .object({
     email: z.string().email("Invalid email format"),
     city: z.string().min(1, "City is required"),
-    frequency: z.enum(["hourly", "daily"], {
-      errorMap: () => ({
-        message: "Frequency must be either 'hourly' or 'daily'",
-      }),
-    }),
+    frequency: z
+      .enum(["hourly", "daily"], {
+        errorMap: () => ({
+          message: "Frequency must be either 'hourly' or 'daily'",
+        }),
+      })
+      .transform((freq) => freq.toUpperCase() as Frequency),
   })
   .strict();
 export type SubscribeBody = z.infer<typeof SubscribeBodySchema>;
