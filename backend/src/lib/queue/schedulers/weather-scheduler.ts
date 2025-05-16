@@ -8,7 +8,14 @@ import { JOB_TYPES } from "../constants";
  */
 class WeatherScheduler {
   private getRepeatPattern(frequency: Frequency) {
-    return frequency === "HOURLY" ? "0 * * * *" : "0 8 * * *";
+    switch (frequency) {
+      case "HOURLY":
+        return "0 * * * *";
+      case "DAILY":
+        return "0 8 * * *";
+      default:
+        return "0 8 * * *";
+    }
   }
 
   /**
@@ -76,10 +83,7 @@ class WeatherScheduler {
 
     const { frequency } = subscription;
 
-    // Set repeat pattern based on frequency
     const repeatOptions = { pattern: this.getRepeatPattern(frequency) };
-
-    // Create a unique scheduler ID for this subscription
     const schedulerId = `subscription-${subscriptionId}`;
 
     try {

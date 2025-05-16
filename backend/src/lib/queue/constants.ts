@@ -1,6 +1,7 @@
 export const QUEUE_TYPES = {
-  EMAIL: "email",
-  WEATHER_UPDATE: "weather_update",
+  CONFIRM_EMAIL: "confirm_email_queue",
+  WEATHER_UPDATE: "weather_update_queue",
+  SEND_WEATHER_UPDATE_EMAIL: "send_weather_update_email_queue",
 } as const;
 
 export const JOB_TYPES = {

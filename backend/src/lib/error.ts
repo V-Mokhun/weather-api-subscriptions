@@ -23,18 +23,6 @@ export class BadRequestException extends HttpException {
   }
 }
 
-export class UnauthorizedException extends HttpException {
-  constructor(message = "Unauthorized", errors?: unknown) {
-    super(HTTP_STATUS_CODE.UNAUTHORIZED, message, errors);
-  }
-}
-
-export class ForbiddenException extends HttpException {
-  constructor(message = "Forbidden", errors?: unknown) {
-    super(HTTP_STATUS_CODE.FORBIDDEN, message, errors);
-  }
-}
-
 export class NotFoundException extends HttpException {
   constructor(message = "Not found", errors?: unknown) {
     super(HTTP_STATUS_CODE.NOT_FOUND, message, errors);
@@ -53,12 +41,18 @@ export function logError(request: Request, error: HttpException) {
     url: request.url,
   };
   console.error(
-    `Error: ${error.message}, Status: ${error.status}, Request: ${JSON.stringify(loggedError)}
-Error stack: ${error.stack}`,
+    `Error: ${error.message}, Status: ${
+      error.status
+    }, Request: ${JSON.stringify(loggedError)}
+Error stack: ${error.stack}`
   );
 }
 
-export function errorResponse(error: HttpException, _request: Request, response: Response) {
+export function errorResponse(
+  error: HttpException,
+  _request: Request,
+  response: Response
+) {
   response.status(error.status);
   response.json({
     message: error.message,
@@ -67,28 +61,37 @@ export function errorResponse(error: HttpException, _request: Request, response:
   });
 }
 
-export function serverErrorResponse(request: Request, response: Response, message?: string) {
+export function serverErrorResponse(
+  request: Request,
+  response: Response,
+  message?: string
+) {
   const error = new ServerErrorException(message);
   logError(request, error);
   errorResponse(error, request, response);
 }
 
-export function badRequestResponse(request: Request, response: Response, message: string, errors?: unknown) {
+export function badRequestResponse(
+  request: Request,
+  response: Response,
+  message: string,
+  errors?: unknown
+) {
   errorResponse(new BadRequestException(message, errors), request, response);
 }
 
-export function unauthorizedResponse(request: Request, response: Response, message?: string) {
-  errorResponse(new UnauthorizedException(message), request, response);
-}
-
-export function forbiddenResponse(request: Request, response: Response, message?: string) {
-  errorResponse(new ForbiddenException(message), request, response);
-}
-
-export function notFoundResponse(request: Request, response: Response, message?: string) {
+export function notFoundResponse(
+  request: Request,
+  response: Response,
+  message?: string
+) {
   errorResponse(new NotFoundException(message), request, response);
 }
 
-export function conflictResponse(request: Request, response: Response, message?: string) {
+export function conflictResponse(
+  request: Request,
+  response: Response,
+  message?: string
+) {
   errorResponse(new ConflictException(message), request, response);
 }

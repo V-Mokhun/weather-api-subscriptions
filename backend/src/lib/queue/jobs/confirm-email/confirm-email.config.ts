@@ -4,7 +4,7 @@ import { WorkerConfig } from "../../types";
 
 export const confirmEmailConfig: WorkerConfig = {
   ...rootConfig,
-  queueName: QUEUE_TYPES.EMAIL,
+  queueName: QUEUE_TYPES.CONFIRM_EMAIL,
   concurrency: 1,
 };
 

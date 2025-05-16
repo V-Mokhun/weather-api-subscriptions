@@ -2,7 +2,9 @@ import { Queue } from "bullmq";
 import { rootConfig } from "../config";
 import { QueueConfig, QueueType } from "../types";
 
-export function createQueue(queueName: QueueType): Queue {
+export function createQueue<T = any, R = any>(
+  queueName: QueueType
+): Queue<T, R> {
   const queueConfig: QueueConfig = {
     ...rootConfig,
     queueName,

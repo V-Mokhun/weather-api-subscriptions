@@ -4,7 +4,7 @@ import { UpdateWeatherDataJobData } from "./update-weather-data.config";
 import { WeatherData, weatherService } from "@/lib/weather";
 import { db } from "@/db";
 import { CACHE_THRESHOLD } from "@/constants";
-import { EmailQueue } from "../../queues";
+import { SendWeatherUpdateEmailQueue } from "../../queues";
 import { JOB_TYPES } from "../../constants";
 
 export class UpdateWeatherDataProcessor implements JobProcessor {
@@ -40,14 +40,12 @@ export class UpdateWeatherDataProcessor implements JobProcessor {
         cachedWeather &&
         now.getTime() - cachedWeather.fetchedAt.getTime() < CACHE_THRESHOLD
       ) {
-        console.log(`Using cached weather data for ${city}`);
         weatherData = {
           temperature: cachedWeather.temperature,
           humidity: cachedWeather.humidity,
           description: cachedWeather.description,
         };
       } else {
-        console.info(`Fetching fresh weather data for ${city}`);
         weatherData = await weatherService.getWeatherData(city);
 
         await db.weatherCache.upsert({
@@ -67,13 +65,16 @@ export class UpdateWeatherDataProcessor implements JobProcessor {
         });
       }
 
-      await EmailQueue.add(JOB_TYPES.SEND_WEATHER_UPDATE_EMAIL, {
-        email,
-        city,
-        unsubscribeToken,
-        weatherData,
-        subscriptionId,
-      });
+      await SendWeatherUpdateEmailQueue.add(
+        JOB_TYPES.SEND_WEATHER_UPDATE_EMAIL,
+        {
+          email,
+          city,
+          unsubscribeToken,
+          weatherData,
+          subscriptionId,
+        }
+      );
     } catch (error) {
       console.error(
         `Failed to update weather data for ${subscriptionId}`,

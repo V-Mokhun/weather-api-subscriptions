@@ -7,8 +7,8 @@ import {
 import { db } from "@/db";
 import * as subscriptionService from "./subscription.service";
 import {
+  ConfirmEmailQueue,
   conflictResponse,
-  EmailQueue,
   JOB_TYPES,
   notFoundResponse,
   weatherScheduler,
@@ -37,7 +37,7 @@ export async function subscribe(
 
     const { confirmToken } = await subscriptionService.subscribe(req.body);
 
-    await EmailQueue.add(JOB_TYPES.CONFIRM_EMAIL, {
+    await ConfirmEmailQueue.add(JOB_TYPES.CONFIRM_EMAIL, {
       email,
       city,
       confirmToken,

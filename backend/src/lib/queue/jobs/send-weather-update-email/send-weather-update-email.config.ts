@@ -5,7 +5,7 @@ import { WorkerConfig } from "../../types";
 
 export const sendWeatherUpdateEmailConfig: WorkerConfig = {
   ...rootConfig,
-  queueName: QUEUE_TYPES.EMAIL,
+  queueName: QUEUE_TYPES.SEND_WEATHER_UPDATE_EMAIL,
   concurrency: 1,
 };
 

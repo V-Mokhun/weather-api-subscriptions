@@ -1,4 +1,9 @@
 import { env } from "@/config";
+import {
+  HttpException,
+  NotFoundException,
+  ServerErrorException,
+} from "../error";
 
 export interface WeatherData {
   temperature: number;
@@ -31,7 +36,18 @@ export class WeatherService {
         }
       );
 
+      if (!response.ok) {
+        throw new HttpException(
+          response.status,
+          `Failed to fetch weather data for ${city}: ${response.statusText}`
+        );
+      }
+
       const data = await response.json();
+
+      if (!data.current) {
+        throw new NotFoundException("Weather data not found");
+      }
 
       return {
         temperature: data.current.temp_c,
@@ -39,13 +55,17 @@ export class WeatherService {
         description: data.current.condition.text,
       };
     } catch (error) {
-      if (error instanceof Error && error.message === "City not found") {
-        throw new Error("City not found");
-      }
-
       console.error("Weather API error:", error);
 
-      throw new Error(`Failed to fetch weather data: ${error}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      if (error instanceof Error) {
+        throw new ServerErrorException(error.message);
+      }
+
+      throw new ServerErrorException("Failed to fetch weather data");
     }
   }
 }
