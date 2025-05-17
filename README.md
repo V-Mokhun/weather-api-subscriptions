@@ -111,5 +111,10 @@ pnpm run dev
 The project includes both unit and integration tests. Run them with:
 
 ```bash
+# if you didn't run prisma generate, run it first
+pnpm run db:generate
+```
+
+```bash
 pnpm run test
 ```
