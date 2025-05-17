@@ -22,7 +22,7 @@ app.get("/health", (_req, res) => {
   res.send("OK");
 });
 
-app.use("/", subscriptionRouter);
-app.use("/weather", weatherRouter);
+app.use("/api", subscriptionRouter);
+app.use("/api/weather", weatherRouter);
 
 app.use(errorMiddleware);

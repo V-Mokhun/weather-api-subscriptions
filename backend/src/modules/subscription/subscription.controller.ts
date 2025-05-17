@@ -1,11 +1,4 @@
-import { NextFunction, Response } from "express";
-import {
-  ConfirmSubscriptionRequest,
-  SubscribeRequest,
-  UnsubscribeRequest,
-} from "./subscription.route";
 import { db } from "@/db";
-import * as subscriptionService from "./subscription.service";
 import {
   ConfirmEmailQueue,
   conflictResponse,
@@ -13,6 +6,13 @@ import {
   notFoundResponse,
   weatherScheduler,
 } from "@/lib";
+import { NextFunction, Response } from "express";
+import {
+  ConfirmSubscriptionRequest,
+  SubscribeRequest,
+  UnsubscribeRequest,
+} from "./subscription.route";
+import * as subscriptionService from "./subscription.service";
 
 export async function subscribe(
   req: SubscribeRequest,
@@ -67,7 +67,11 @@ export async function confirmSubscription(
       },
     });
 
-    if (!subscription) {
+    if (
+      !subscription ||
+      !subscription.confirmTokenExpiresAt ||
+      subscription.confirmTokenExpiresAt < new Date()
+    ) {
       return notFoundResponse(req, res, "Invalid or expired token");
     }
 

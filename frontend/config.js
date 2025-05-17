@@ -3,7 +3,7 @@ const config = {
     apiUrl: "http://localhost:8001/api",
   },
   production: {
-    apiUrl: "https://software-school-genesis.onrender.com",
+    apiUrl: "https://software-school-genesis.onrender.com/api",
   },
 };
 

@@ -1,6 +1,6 @@
 import { SUBSCRIPTION_CONFIRMATION_EXPIRATION_TIME } from "@/constants";
 import { db } from "@/db";
-import { SubscribeBody } from "./subscription.schema";
+import { FREQUENCY_MAP, SubscribeBody } from "./subscription.schema";
 import crypto from "crypto";
 
 export const subscribe = async (data: SubscribeBody) => {
@@ -21,7 +21,7 @@ export const subscribe = async (data: SubscribeBody) => {
       },
     },
     update: {
-      frequency,
+      frequency: FREQUENCY_MAP[frequency],
       confirmToken,
       confirmTokenExpiresAt,
       unsubscribeToken,
@@ -30,7 +30,7 @@ export const subscribe = async (data: SubscribeBody) => {
     create: {
       email,
       city,
-      frequency,
+      frequency: FREQUENCY_MAP[frequency],
       confirmToken,
       confirmTokenExpiresAt,
       unsubscribeToken,

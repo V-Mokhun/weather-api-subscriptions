@@ -34,33 +34,6 @@ export const prisma = {
   $on: jest.fn(),
 } as unknown as MockPrismaClient;
 
-// Default mock implementations
-prisma.subscription.findMany.mockResolvedValue([]);
-prisma.subscription.findUnique.mockResolvedValue(null);
-prisma.subscription.create.mockResolvedValue({
-  id: 1,
-  email: "test@example.com",
-  city: "London",
-  frequency: "DAILY",
-  confirmed: true,
-  confirmToken: null,
-  confirmTokenExpiresAt: null,
-  unsubscribeToken: "token",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  lastSentAt: null,
-});
-
-prisma.weatherCache.findUnique.mockResolvedValue(null);
-prisma.weatherCache.upsert.mockResolvedValue({
-  id: 1,
-  city: "London",
-  temperature: 20,
-  humidity: 50,
-  description: "Sunny",
-  fetchedAt: new Date(),
-});
-
 export const PrismaClient = jest.fn(() => prisma);
 
 export * from "@prisma/client";
