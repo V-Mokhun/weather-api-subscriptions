@@ -23,17 +23,23 @@ A Node.js application that provides weather updates for subscribed users. The se
 ```
 backend/
 ├── src/
+│   ├── __mocks__/       # Mock files
 │   ├── __tests__/        # Unit and integration tests
 │   ├── config/           # Environment and configuration setup
+│   ├── constants/       # Constants
 │   ├── db/              # Database client and utilities
 │   ├── lib/             # Core libraries and utilities
 │   │   ├── email/       # Email service implementation
 │   │   ├── queue/       # Queue management with BullMQ
 │   │   └── weather/     # Weather service implementation
+│   ├── middleware/     # Middlewares
 │   ├── modules/         # Feature modules
 │   │   ├── subscription/# Subscription management
 │   │   └── weather/     # Weather endpoints
+│   ├── types/           # Type definitions
+│   ├── app.ts           # API entry point
 │   └── index.ts         # Application entry point
+│   └── types.d.ts       # TypeScript declarations
 ├── prisma/              # Database schema and migrations
 ```
 
