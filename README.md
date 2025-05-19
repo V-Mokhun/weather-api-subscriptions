@@ -43,6 +43,8 @@ backend/
 ├── prisma/              # Database schema and migrations
 ```
 
+# All commands should be run from 'backend' folder
+
 ## Environment Setup
 
 1. Copy the example environment file:
